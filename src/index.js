@@ -4,6 +4,7 @@ const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
 const {generateMsg, generateLoc} = require('./utils/messages')
+const { addUser, removeUser, getUser, getUsers } = require('./utils/users')
 
 const app = express()
 const server = http.createServer(app)
@@ -17,14 +18,17 @@ app.use(express.static(publicDirPath))
 let count = 0
 
 io.on('connection', (socket) => {
-    
     console.log('new connection')
+    socket.on('join', ({username, room}, cb) => {
+        const {error, user} = addUser({id: socket.id, username, room})
+        if(error) {
+            return cb(error)
+        }
+        socket.join(user.room)
 
-    socket.on('join', ({username, room}) => {
-        socket.join(room)
-        console.log(username,room)
         socket.emit('message', generateMsg('Welcome!'))
-        socket.broadcast.to(room).emit('message', generateMsg(`${username} has joined!`))
+        socket.broadcast.to(user.room).emit('message', generateMsg(`${user.username} has joined!`))
+        cb()
     })
 
     socket.on('sendMessage', (msg, callback)=> {
@@ -42,7 +46,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        io.emit('message', generateMsg('A user left'))
+        const removedUser = removeUser(socket.id)
+        if(removedUser) {
+            io.to(removedUser.room).emit('message', generateMsg(`${removedUser.username} has left`))
+        }
     })
 })
 

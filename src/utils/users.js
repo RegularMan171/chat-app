@@ -15,6 +15,7 @@ const addUser = ({id, username, room}) => {
     const existingUser = users.find((user) => {
         return user.room === room && user.username === username
     })
+    console.log(existingUser)
     //validate username
     if(existingUser) {
         return {
@@ -34,15 +35,17 @@ const removeUser = (id) => {
     }
 }
 
+const getUser = (id) => {
+    return users.find((user) => user.id === id)
+}
 
-addUser({
-    id: 22,
-    username: 'FIrsT',
-    room: 'UsErs'
-})
+const getUsers = (room) => {
+    return users.filter((user) => user.room === room.trim().toLowerCase())
+}
 
-console.log(users)
-
-const removedUser = removeUser(22)
-console.log(removedUser)
-console.log(users)
+module.exports = {
+    addUser,
+    removeUser,
+    getUser,
+    getUsers
+}
