@@ -10,6 +10,7 @@ const $msgs = document.querySelector('#msgs')
 //templates
 const msgTemplate = document.querySelector('#msg-template').innerHTML
 const locTemplate = document.querySelector('#loc-template').innerHTML
+const sideTemplate = document.querySelector('#side-template').innerHTML
 
 //options
 const {username, room} = Qs.parse(location.search, {ignoreQueryPrefix: true})
@@ -17,18 +18,28 @@ const {username, room} = Qs.parse(location.search, {ignoreQueryPrefix: true})
 socket.on('message', (msg) => {
     console.log(msg)
     const html = Mustache.render(msgTemplate, {
+        username: msg.username,
         msg: msg.text,
         createdAt: moment(msg.createdAt).format('k:mm')
     })
     $msgs.insertAdjacentHTML('beforeend', html)
 })
 
-socket.on('locationMsg', (url) => {
+socket.on('locationMsg', (msg) => {
     const html = Mustache.render(locTemplate, {
-        url,
+        username: msg.username,
+        url: msg.url,
         createdAt: moment(url.createdAt).format('k:mm')
     })
     $msgs.insertAdjacentHTML('beforeend', html)
+})
+
+socket.on('roomData', ({room, users}) => {
+    const html = Mustache.render(sideTemplate, {
+        room, 
+        users
+    })
+    document.querySelector('#sidebar').innerHTML = html
 })
 
 $messageForm.addEventListener('submit', (e)=> {
