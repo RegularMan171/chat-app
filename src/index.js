@@ -18,7 +18,7 @@ app.use(express.static(publicDirPath))
 let count = 0
 
 io.on('connection', (socket) => {
-    console.log('new connection')
+    //console.log('new connection')
     socket.on('join', ({username, room}, cb) => {
         const {error, user} = addUser({id: socket.id, username, room})
         if(error) {
@@ -64,5 +64,5 @@ io.on('connection', (socket) => {
 })
 
 server.listen(port, () => {
-    console.log(`running on ${port}`)
+    //console.log(`running on ${port}`)
 })

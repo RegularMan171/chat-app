@@ -36,7 +36,7 @@ const autoScroll = () => {
 }
 
 socket.on('message', (msg) => {
-    console.log(msg)
+    //console.log(msg)
     const html = Mustache.render(msgTemplate, {
         username: msg.username,
         msg: msg.text,
@@ -80,7 +80,7 @@ $messageForm.addEventListener('submit', (e)=> {
         if(error) {
             return console.log(error)
         }
-        console.log("Message delivered")
+        //console.log("Message delivered")
     })
 })
 
@@ -98,7 +98,7 @@ $locButton.addEventListener('click', () => {
         }, () => {
             //enabling location button
             $locButton.removeAttribute('disabled', 'disabled')
-            console.log("location shared")
+            //console.log("location shared")
         })
     })
 })
